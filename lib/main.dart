@@ -32,12 +32,18 @@ class _MainPageState extends State<MainPage> {
   @override
   Widget build(BuildContext context) => MaterialApp(
       home: Scaffold(
-          appBar: AppBar(title: Text('Adashim')),
+          appBar: AppBar(title: const Center( child:  Text('Adashim'))),
           body: _body()));
 
   Widget _body() {
-    if (_permissionDenied) return Center(child: Text('Permission denied'));
-    if (_contacts == null) return Center(child: CircularProgressIndicator());
+    if (_permissionDenied) {
+      return Center(child:Align(alignment: Alignment.center, child: Column(
+          children: const [
+        Text('This app needs contact premission in order to work', textAlign: TextAlign.center,),
+        Text('Go to your app premissions and allow "Contacts" for Adashim', textAlign: TextAlign.center,),
+          ])));
+    }
+    if (_contacts == null) return const Center(child: CircularProgressIndicator());
     return ListView.builder(
         itemCount: _contacts!.length,
         itemBuilder: (context, i) => ListTile(

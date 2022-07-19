@@ -1,3 +1,5 @@
+import 'dart:typed_data';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_contacts/flutter_contacts.dart';
 import 'package:adashim/pages/refuse_permissions.dart';
@@ -22,10 +24,10 @@ class _MainPageState extends State<MainPage> {
   }
 
   Future _fetchContacts() async {
-    if (!await FlutterContacts.requestPermission(readonly: true)) {
+    if (!await FlutterContacts.requestPermission()) {
       setState(() => _permissionDenied = true);
     } else {
-      final contacts = await FlutterContacts.getContacts();
+      final contacts = await FlutterContacts.getContacts(withPhoto: true);
       setState(() => _contacts = contacts);
     }
   }
@@ -38,18 +40,24 @@ class _MainPageState extends State<MainPage> {
 
   Widget _body() {
     if (_permissionDenied) return const RefusePermissionPage();
-
     if (_contacts == null) return const Center(child: CircularProgressIndicator());
+
     return ListView.builder(
         itemCount: _contacts!.length,
-        itemBuilder: (context, i) => ListTile(
+        itemBuilder: (context, i) {
+          Uint8List? image = _contacts![i].photo;
+
+          return ListTile(
+            leading: (image == null)? const CircleAvatar(child: Icon(Icons.person),):CircleAvatar(
+              backgroundImage: MemoryImage(image),
+            ),
             title: Text(_contacts![i].displayName),
             onTap: () async {
               final fullContact =
               await FlutterContacts.getContact(_contacts![i].id);
               await Navigator.of(context).push(
                   MaterialPageRoute(builder: (_) => ContactPage(fullContact!)));
-            }));
+            });});
   }
 }
 

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_contacts/flutter_contacts.dart';
+import 'package:adashim/pages/refuse_permissions.dart';
 
 void main() => runApp(MainPage());
 
@@ -36,13 +37,8 @@ class _MainPageState extends State<MainPage> {
           body: _body()));
 
   Widget _body() {
-    if (_permissionDenied) {
-      return Center(child:Align(alignment: Alignment.center, child: Column(
-          children: const [
-        Text('This app needs contact premission in order to work', textAlign: TextAlign.center,),
-        Text('Go to your app premissions and allow "Contacts" for Adashim', textAlign: TextAlign.center,),
-          ])));
-    }
+    if (_permissionDenied) return const RefusePermissionPage();
+
     if (_contacts == null) return const Center(child: CircularProgressIndicator());
     return ListView.builder(
         itemCount: _contacts!.length,

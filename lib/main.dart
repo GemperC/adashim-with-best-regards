@@ -5,6 +5,7 @@ import 'package:flutter_contacts/flutter_contacts.dart';
 import 'package:adashim/pages/refuse_permissions.dart';
 import 'package:whatsapp_unilink/whatsapp_unilink.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:flutter_sms/flutter_sms.dart';
 
 
 
@@ -60,10 +61,11 @@ class _MainPageState extends State<MainPage> {
         _contactsFiltered = __contacts;
       });
     }
-
-
   }
 
+  void _sendSMS(String message, List<String> recipients) async {
+    sendSMS(message: message, recipients: recipients);
+  }
 
   @override
   Widget build(BuildContext context) => MaterialApp(
@@ -83,7 +85,7 @@ class _MainPageState extends State<MainPage> {
                   ),
                 ),
                 SizedBox(height: 10,),
-                Expanded(child: _contactsList()) ,
+                Expanded(child: _contactsList()),
               ],))));
 
   Widget _contactsList() {
@@ -104,7 +106,10 @@ class _MainPageState extends State<MainPage> {
                       title: Text(contact.displayName),
 
                       onTap: () async {
+                        final reciever =
+                        await FlutterContacts.getContact(contact.id);
 
+                        _sendSMS("Dash", [reciever!.phones.first.number]);
 
 
                         final fullContact =

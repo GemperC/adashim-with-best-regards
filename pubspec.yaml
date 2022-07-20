@@ -31,7 +31,9 @@ dependencies:
     sdk: flutter
 
   flutter_contacts: ^1.1.5
-
+  url_launcher: ^6.1.5
+  whatsapp_unilink: ^2.0.1+1
+  whatsapp_share: ^1.1.1
 
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.

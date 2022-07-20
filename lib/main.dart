@@ -3,6 +3,10 @@ import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import 'package:flutter_contacts/flutter_contacts.dart';
 import 'package:adashim/pages/refuse_permissions.dart';
+import 'package:whatsapp_unilink/whatsapp_unilink.dart';
+import 'package:url_launcher/url_launcher.dart';
+
+
 
 void main() => runApp(MainPage());
 
@@ -18,6 +22,8 @@ class _MainPageState extends State<MainPage> {
   List<Contact> _contactsFiltered = [];
   bool _permissionDenied = false;
   TextEditingController searchController = TextEditingController();
+
+
 
   @override
   void initState() {
@@ -98,8 +104,11 @@ class _MainPageState extends State<MainPage> {
                       title: Text(contact.displayName),
 
                       onTap: () async {
+
+
+
                         final fullContact =
-                        await FlutterContacts.getContact(_contacts![i].id);
+                        await FlutterContacts.getContact(contact.id);
                         await Navigator.of(context).push(
                             MaterialPageRoute(builder: (_) => ContactPage(fullContact!)));
                       }),

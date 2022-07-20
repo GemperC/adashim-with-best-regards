@@ -15,12 +15,15 @@ class MainPage extends StatefulWidget {
 
 class _MainPageState extends State<MainPage> {
   List<Contact>? _contacts;
+  List<Contact> _contactsFiltered = [];
   bool _permissionDenied = false;
+  TextEditingController searchController = TextEditingController();
 
   @override
   void initState() {
     super.initState();
     _fetchContacts();
+    searchController.addListener(() {filterContacts();});
   }
 
   Future _fetchContacts() async {
@@ -32,32 +35,78 @@ class _MainPageState extends State<MainPage> {
     }
   }
 
+  filterContacts(){
+    List<Contact> __contacts = [];
+    __contacts.addAll(_contacts!);
+    if (searchController.text.isNotEmpty){
+      __contacts.retainWhere((contact) {
+        String searchTerm = searchController.text.toLowerCase();
+        String contactName = contact.displayName.toLowerCase();
+        return contactName.contains(searchTerm);
+      });
+
+      setState((){
+        _contactsFiltered = __contacts;
+      });
+    }
+    else {
+      setState((){
+        _contactsFiltered = __contacts;
+      });
+    }
+
+
+  }
+
+
   @override
   Widget build(BuildContext context) => MaterialApp(
       home: Scaffold(
           appBar: AppBar(title: const Center( child:  Text('Adashim'))),
-          body: _body()));
+          body:Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 10.0, vertical: 16.0),
+              child:Column(children: [
+                Container(
+                  child: TextField(
+                    controller: searchController,
+                    decoration: InputDecoration(
+                        labelText: "Search Contact",
+                        border: OutlineInputBorder( borderSide: BorderSide( color: Theme.of(context).primaryColor)),
+                        prefixIcon: Icon( Icons.search, color: Theme.of(context).primaryColor,)
+                    ),
+                  ),
+                ),
+                SizedBox(height: 10,),
+                Expanded(child: _contactsList()) ,
+              ],))));
 
-  Widget _body() {
+  Widget _contactsList() {
+    bool isSearching = searchController.text.isNotEmpty;
     if (_permissionDenied) return const RefusePermissionPage();
     if (_contacts == null) return const Center(child: CircularProgressIndicator());
 
     return ListView.builder(
-        itemCount: _contacts!.length,
+      shrinkWrap: true,
+        itemCount: isSearching == true ? _contactsFiltered.length : _contacts!.length,
         itemBuilder: (context, i) {
+        Contact contact = _contacts![i];
           Uint8List? image = _contacts![i].photo;
+          return Row(children: [
+                  Expanded(child: ListTile(
+                      leading: (image == null)? const CircleAvatar(child: Icon(Icons.person),):CircleAvatar(
+                          backgroundImage: MemoryImage(image)),
+                      title: Text(contact.displayName),
 
-          return ListTile(
-            leading: (image == null)? const CircleAvatar(child: Icon(Icons.person),):CircleAvatar(
-              backgroundImage: MemoryImage(image),
-            ),
-            title: Text(_contacts![i].displayName),
-            onTap: () async {
-              final fullContact =
-              await FlutterContacts.getContact(_contacts![i].id);
-              await Navigator.of(context).push(
-                  MaterialPageRoute(builder: (_) => ContactPage(fullContact!)));
-            });});
+                      onTap: () async {
+                        final fullContact =
+                        await FlutterContacts.getContact(_contacts![i].id);
+                        await Navigator.of(context).push(
+                            MaterialPageRoute(builder: (_) => ContactPage(fullContact!)));
+                      }),
+
+                  )
+              ])
+              ;});
   }
 }
 

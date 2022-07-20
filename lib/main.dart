@@ -89,8 +89,8 @@ class _MainPageState extends State<MainPage> {
       shrinkWrap: true,
         itemCount: isSearching == true ? _contactsFiltered.length : _contacts!.length,
         itemBuilder: (context, i) {
-        Contact contact = _contacts![i];
-          Uint8List? image = _contacts![i].photo;
+        Contact contact = isSearching == true ? _contactsFiltered[i] : _contacts![i];
+          Uint8List? image =  isSearching == true ? _contactsFiltered[i].photo : _contacts![i].photo;
           return Row(children: [
                   Expanded(child: ListTile(
                       leading: (image == null)? const CircleAvatar(child: Icon(Icons.person),):CircleAvatar(
